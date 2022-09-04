@@ -5,7 +5,7 @@ lua54 'yes'
 
 author 'Mahan Moulaei'
 discord 'Mahan#8183'
-description 'Bridge Resource for QB-Core and Ox_Inventory'
+description 'Backward-compatible resource for the replacement of qb-inventory to ox_inventory'
 
 shared_scripts {
 	'shared/*.lua'
