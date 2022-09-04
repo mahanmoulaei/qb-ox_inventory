@@ -257,74 +257,6 @@ exports("UseItem", UseItem)
 
 --#region Events
 
-AddEventHandler('QBCore:Server:PlayerLoaded', function(Player)
-	--[[
-	QBCore.Functions.AddPlayerMethod(k, "AddItem", function(item, count, slot, info)
-		return AddItem(k, item, count, slot, info)
-	end)
-	
-	QBCore.Functions.AddPlayerMethod(k, "RemoveItem", function(item, count, slot)
-		return RemoveItem(k, item, count, slot)
-	end)
-	]]
-	QBCore.Functions.AddPlayerMethod(k, "GetItemBySlot", function(slot)
-		return GetItemBySlot(k, slot)
-	end)
-
-	QBCore.Functions.AddPlayerMethod(k, "GetItemByName", function(item)
-		return GetItemByName(k, item)
-	end)
-
-	QBCore.Functions.AddPlayerMethod(k, "GetItemsByName", function(item)
-		return GetItemsByName(k, item)
-	end)
-	--[[
-	QBCore.Functions.AddPlayerMethod(k, "ClearInventory", function(filterItems)
-		ClearInventory(k, filterItems)
-	end)
-
-	QBCore.Functions.AddPlayerMethod(k, "SetInventory", function(items)
-		SetInventory(k, items)
-	end)
-	]]
-end)
-
-AddEventHandler('onResourceStart', function(resourceName)
-	if resourceName ~= GetCurrentResourceName() then return end
-	local Players = QBCore.Functions.GetQBPlayers()
-	for k in pairs(Players) do
-		--[[
-		QBCore.Functions.AddPlayerMethod(k, "AddItem", function(item, count, slot, info)
-			return AddItem(k, item, count, slot, info)
-		end)
-
-		QBCore.Functions.AddPlayerMethod(k, "RemoveItem", function(item, count, slot)
-			return RemoveItem(k, item, count, slot)
-		end)
-		]]
-		QBCore.Functions.AddPlayerMethod(k, "GetItemBySlot", function(slot)
-			return GetItemBySlot(k, slot)
-		end)
-
-		QBCore.Functions.AddPlayerMethod(k, "GetItemByName", function(item)
-			return GetItemByName(k, item)
-		end)
-
-		QBCore.Functions.AddPlayerMethod(k, "GetItemsByName", function(item)
-			return GetItemsByName(k, item)
-		end)
-		--[[
-		QBCore.Functions.AddPlayerMethod(k, "ClearInventory", function(filterItems)
-			ClearInventory(k, filterItems)
-		end)
-
-		QBCore.Functions.AddPlayerMethod(k, "SetInventory", function(items)
-			SetInventory(k, items)
-		end)
-		]]
-	end
-end)
-
 RegisterNetEvent('QBCore:Server:UpdateObject', function()
     if source ~= '' then return end -- Safety check if the event was not called from the server.
     QBCore = exports['qb-core']:GetCoreObject()
@@ -469,8 +401,13 @@ RegisterNetEvent('inventory:server:OpenInventory', function(type, name, other, l
 	end
 end)
 
-for exportName, func in pairs(qbInventoryExports) do
-	AddEventHandler(('__cfx_export_qb-inventory_%s'):format(exportName), function(cb)
-		cb(func)
-	end)
+local function setupQbInventoryExports()
+	Wait(5000)
+	
 end
+
+for exportName, func in pairs(qbInventoryExports) do
+		AddEventHandler(('__cfx_export_qb-inventory_%s'):format(exportName), function(cb)
+			cb(func)
+		end)
+	end
