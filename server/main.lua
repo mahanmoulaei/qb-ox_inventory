@@ -368,9 +368,37 @@ local function RegisterStash(name, label, slots, maxWeight, owner, groups, coord
 	ox_inventory:RegisterStash(name, label or 'Stash', slots or 50, maxWeight or 1000000, owner, groups, coords)
 end
 
+local function RegisterShop(name, label, items)
+	local groups = {}
+	local items = items or {}
+
+	-- convert items to the format ox_inventory expects
+	for k, v in pairs(items) do
+		items[k] = { name = v.name, price = v.price, count = v.amount }
+	end
+
+	-- check if the shop is a job shop and add the job to the groups (only accessible by the job)
+	if QBCore.Shared.Jobs[name] then
+		groups[name] = 0
+	end
+
+	-- register the shop
+	ox_inventory:RegisterShop(name, {
+		name = label or 'Shop',
+		inventory = items,
+		groups = groups
+	})
+end
+
 RegisterNetEvent(CurrentResourceName..'server:RegisterStash', function(name, label, slots, maxWeight, owner, groups, coords)
 	if source then
 		RegisterStash(name, label, slots, maxWeight, owner, groups, coords)
+	end
+end)
+
+RegisterNetEvent(CurrentResourceName..'server:RegisterShop', function(name, label, items)
+	if source then
+		RegisterShop(name, label, items)
 	end
 end)
 
@@ -380,15 +408,8 @@ RegisterNetEvent('inventory:server:OpenInventory', function(type, name, other, l
 	local playerStateBag = Player(source).state
 	if playerStateBag.invBusy then return print('You cannot open any inventory at the moment!') end
 	if type == 'shop' then
-		-- TODO : update to ox_inventory once shop module inside of it is renewed
-		local data = { shoptable = { products = other.items, label = other.label, }, custom = true }
-		if GetResourceState('qb-shops') == 'started' then
-			TriggerClientEvent('qb-shops:ShopMenu', source, data, true) --needs testing
-		elseif GetResourceState('jim-shops') == 'started' then
-			TriggerClientEvent('jim-shops:ShopMenu', source, data, true)
-		else
-			print('You need to start either qb-shops or jim-shops if you want compatibility with qb-inventory\'s event of \'inventory:server:OpenInventory\'')
-		end
+		if name then RegisterShop(name, other.label, other.items) end
+		TriggerClientEvent(CurrentResourceName..'client:OpenShop', source, name)
 	elseif type == 'stash' then
 		if label then RegisterStash(name, label) end
 		TriggerClientEvent(CurrentResourceName..'client:OpenStash', source, name)
