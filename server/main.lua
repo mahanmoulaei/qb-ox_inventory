@@ -380,6 +380,8 @@ local function RegisterShop(name, label, items)
 	-- check if the shop is a job shop and add the job to the groups (only accessible by the job)
 	if QBCore.Shared.Jobs[name] then
 		groups[name] = 0
+	else
+		groups = nil
 	end
 
 	-- register the shop
