@@ -18,6 +18,13 @@ RegisterNetEvent(CurrentResourceName..'client:OpenStash', function(name)
     end
 end)
 
+RegisterNetEvent(CurrentResourceName..'client:OpenShop', function(name)
+    if not ox_inventory:openInventory('shop', { type = name }) then
+        TriggerServerEvent(CurrentResourceName..'server:RegisterShop', name)
+        ox_inventory:openInventory('shop', { type = name })
+    end
+end)
+
 RegisterNetEvent(CurrentResourceName..'client:OpenOtherInventory', function(name)
     -- if GetInvokingResource() ~= CurrentResourceName then return end
     if not name then
